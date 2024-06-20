@@ -1,6 +1,6 @@
-package co.zoltans.kafka.demo.kafkademoproducer.config;
+package co.zoltans.kafka.demo.kafkademoaggregator.config;
 
-import co.zoltans.kafka.demo.kafkademoproducer.KafkaMessage;
+import co.zoltans.kafka.demo.kafkademoaggregator.message.PublicationMessage;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,17 +37,17 @@ public class KafkaConsumerConfig {
   }
 
   @Bean
-  public ConsumerFactory<String, KafkaMessage> consumerFactory() {
-    JsonDeserializer<KafkaMessage> jsonDeserializer = new JsonDeserializer<>();
+  public ConsumerFactory<String, PublicationMessage> consumerFactory() {
+    JsonDeserializer<PublicationMessage> jsonDeserializer = new JsonDeserializer<>();
     jsonDeserializer.addTrustedPackages("*");
     return new DefaultKafkaConsumerFactory<>(
         consumerConfigs(), new StringDeserializer(), jsonDeserializer);
   }
 
   @Bean
-  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, KafkaMessage>> factory(
-      ConsumerFactory<String, KafkaMessage> consumerFactory) {
-    ConcurrentKafkaListenerContainerFactory<String, KafkaMessage> factory =
+  public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String, PublicationMessage>> factory(
+      ConsumerFactory<String, PublicationMessage> consumerFactory) {
+    ConcurrentKafkaListenerContainerFactory<String, PublicationMessage> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(consumerFactory);
     return factory;

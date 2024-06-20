@@ -1,4 +1,4 @@
-package co.zoltans.kafka.demo.kafkademoproducer.message;
+package co.zoltans.kafka.demo.kafkademoaggregator.message;
 
 import java.time.LocalDateTime;
 

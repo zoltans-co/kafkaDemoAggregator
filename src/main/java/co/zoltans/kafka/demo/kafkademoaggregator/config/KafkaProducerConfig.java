@@ -1,6 +1,6 @@
-package co.zoltans.kafka.demo.kafkademoproducer.config;
+package co.zoltans.kafka.demo.kafkademoaggregator.config;
 
-import co.zoltans.kafka.demo.kafkademoproducer.KafkaMessage;
+import co.zoltans.kafka.demo.kafkademoaggregator.message.PublicationAnalytics;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,13 +29,13 @@ public class KafkaProducerConfig {
   }
 
   @Bean
-  public ProducerFactory<String, KafkaMessage> producerFactory() {
+  public ProducerFactory<String, PublicationAnalytics> producerFactory() {
     return new DefaultKafkaProducerFactory<>(producerConfigs());
   }
 
   @Bean
-  public KafkaTemplate<String, KafkaMessage> kafkaTemplate(
-      ProducerFactory<String, KafkaMessage> producerFactory) {
+  public KafkaTemplate<String, PublicationAnalytics> kafkaTemplate(
+      ProducerFactory<String, PublicationAnalytics> producerFactory) {
     return new KafkaTemplate<>(producerFactory);
   }
 }

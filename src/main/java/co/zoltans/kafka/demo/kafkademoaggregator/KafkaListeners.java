@@ -1,18 +1,43 @@
-package co.zoltans.kafka.demo.kafkademoconsumer;
+package co.zoltans.kafka.demo.kafkademoaggregator;
 
+import co.zoltans.kafka.demo.kafkademoaggregator.message.PublicationAnalytics;
+import co.zoltans.kafka.demo.kafkademoaggregator.message.PublicationMessage;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
 
 @Component
 public class KafkaListeners {
-
-  @KafkaListener(topics = "kafka-demo", groupId = "kafka-demo-group-id-2")
-  void listenMessage(String kafkaMessage) {
-    System.out.println("Received Message in group kafka-demo-group-id-2: " + kafkaMessage);
+  
+  private KafkaTemplate<String, PublicationAnalytics> kafkaAnalyticsTemplate;
+  
+  public KafkaListeners(KafkaTemplate<String, PublicationAnalytics> kafkaAnalyticsTemplate) {
+    this.kafkaAnalyticsTemplate = kafkaAnalyticsTemplate;
   }
   
-  @KafkaListener(topics = "kafka-demo-aggregated", groupId = "kafka-demo-aggregated-group-id-2")
-  void listenMessageAggregated(String kafkaMessage) {
-    System.out.println("Received Message in group kafka-demo-aggregated-group-id-2: " + kafkaMessage);
+  @KafkaListener(topics = "publications-topic", groupId = "aggregator-group-id")
+  void listenMessage(PublicationMessage publicationMessage) {
+    System.out.println("Received publication topic message: " + publicationMessage);
+    kafkaAnalyticsTemplate.send("analytics-topic", new PublicationAnalytics(
+            publicationMessage.title(),
+            publicationMessage.author(),
+            publicationMessage.title().length(),
+            publicationMessage.content().length(),
+            wordCount(publicationMessage.content())
+    ));
   }
+  
+  //@KafkaListener(topics = "analytics-topic", groupId = "aggregator-group-id")
+  void listenMessageAggregated(PublicationAnalytics analyticsMessage) {
+    System.out.println("Received analytics topic message: " + analyticsMessage);
+  }
+  
+  public static int wordCount(String str) {
+    if (str == null || str.isEmpty()) {
+      return 0;
+    }
+    String[] words = str.split("\\s+");
+    return words.length;
+  }
+  
 }
